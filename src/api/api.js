@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://empty-athletes-trainer-classics.trycloudflare.com",
+  baseURL: "https://compliance-drain-love-necessarily.trycloudflare.com",
 });
 
 export default api;
