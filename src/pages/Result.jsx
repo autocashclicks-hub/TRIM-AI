@@ -1,4 +1,5 @@
 import { useState } from "react";
+import api from "../api/api";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../styles/Result.css";
@@ -7,7 +8,68 @@ export default function Result() {
 
   const data = JSON.parse(localStorage.getItem("analysis"));
 
-  const [previewImage, setPreviewImage] = useState(null);
+ const [feedbackDone, setFeedbackDone] = useState(false);
+ const [showCorrection, setShowCorrection] = useState(false);
+ const [previewImage, setPreviewImage] = useState(null);
+
+
+const saveTraining = async (shape) => {
+
+  shape = shape.toLowerCase();
+
+  try {
+
+    const image =
+      localStorage.getItem("trainingImage");
+
+
+    if(!image){
+      alert("No image found");
+      return;
+    }
+
+
+    const blob =
+      await fetch(image)
+      .then(r => r.blob());
+
+
+    const form =
+      new FormData();
+
+
+    form.append(
+      "file",
+      blob,
+      "training.jpg"
+    );
+
+
+    form.append(
+      "shape",
+      shape
+    );
+
+
+    await api.post(
+      "/save-training",
+      form
+    );
+
+
+    setFeedbackDone(true);
+
+
+  } catch(err){
+
+    console.log(err);
+
+    alert(
+      "Training save failed"
+    );
+
+  }
+};
 
   const imageMap = {
     "Buzz Cut": "/hairstyles/buzz-cut.png",
@@ -167,6 +229,88 @@ export default function Result() {
           );
 
         })}
+
+      </div>
+
+<div className="trainingBox">
+
+<h2>
+🤖 Help TRIM AI Improve
+</h2>
+
+
+<p>
+Was the face shape correct?
+</p>
+
+
+{feedbackDone ? (
+
+<h3>
+✅ Thank you! AI learned from this scan.
+</h3>
+
+) : (
+
+<>
+
+<button
+className="primaryBtn"
+onClick={() =>
+ saveTraining(data.faceShape)
+}
+>
+YES, Correct
+</button>
+
+
+<button
+className="secondaryBtn"
+onClick={() =>
+ setShowCorrection(true)
+}
+>
+NO, Fix Shape
+</button>
+
+
+{showCorrection && (
+
+<div className="shapeOptions">
+
+<p>Select correct shape:</p>
+
+
+{[
+"Oval",
+"Square",
+"Round",
+"Heart",
+"Oblong"
+].map(shape => (
+
+<button
+
+key={shape}
+
+onClick={() =>
+ saveTraining(shape)
+}
+
+>
+{shape}
+</button>
+
+))}
+
+
+</div>
+
+)}
+
+</>
+
+)}
 
       </div>
 
