@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://roster-achievement-belief-capable.trycloudflare.com",
+  baseURL: "https://perspectives-members-wave-closure.trycloudflare.com",
 });
 
 export default api;
